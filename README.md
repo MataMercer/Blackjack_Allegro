@@ -1,2 +1,2 @@
 # Blackjack_Allegro
-Blackjack made with the Allegro library
+Blackjack made with the Allegro 5 library
