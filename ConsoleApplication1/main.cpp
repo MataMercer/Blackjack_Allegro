@@ -19,6 +19,7 @@
 #include "Panel.h"
 #include <vector>
 
+//constants (mostly sizes) 
 const float FPS = 60;
 const int SCREEN_W = 800;
 const int SCREEN_H = 600;
@@ -32,18 +33,13 @@ const int SCORE_PANEL_WIDTH = SCREEN_W / 3;
 const int SCORE_PANEL_HEIGHT = 96;
 
 using namespace std;
-enum MYKEYS {
-	KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT
-};
 
+//STATE used for deciding what to display and ask for input in the game loop. aka organizes the game loop.
 enum STATE { TITLE, PLAYING, GAMEOVER };
-
-
-
-
 
 int main(int argc, char **argv)
 {
+	//declare variables 
 	ALLEGRO_DISPLAY *display = NULL;
 	ALLEGRO_EVENT_QUEUE *event_queue = NULL;
 	ALLEGRO_TIMER *timer = NULL;
@@ -61,7 +57,7 @@ int main(int argc, char **argv)
 
 
 	//initialize ui objects
-	//title
+	//title buttons
 	Button start_button;
 	start_button.setX(SCREEN_W / 2 - BUTTON_WIDTH / 2);
 	start_button.setY(SCREEN_H / 2 - BUTTON_HEIGHT);
@@ -74,9 +70,9 @@ int main(int argc, char **argv)
 	exit_button.setWidth(BUTTON_WIDTH);
 	exit_button.setHeight(BUTTON_HEIGHT);
 
-	//game screen
 
-
+	//gameplay buttons
+	//initialize each button, push them to a vector, put vector in a function that sets their x positions centered on the screen.
 	Button deal_button;
 	deal_button.setWidth(BUTTON_WIDTH_GAME_UI);
 	deal_button.setHeight(BUTTON_HEIGHT_GAME_UI);
@@ -139,7 +135,6 @@ int main(int argc, char **argv)
 	game_ui_bet_button_list.push_back(&bet_250_button);
 	game_ui_bet_button_list.push_back(&bet_500_button);
 	game_ui_bet_button_list.push_back(&bet_1000_button);
-
 	panel.set_button_x_positions(SCREEN_W / 2, y_pos_game_bet_ui_buttons, BUTTON_WIDTH, game_ui_bet_button_list);
 
 
@@ -205,6 +200,8 @@ int main(int argc, char **argv)
 	vector<int>dealer_card_x_positions = panel.calculate_x_positions(SCREEN_W / 2, dealer_card_image_list.size(), CARD_WIDTH);
 	vector<int>player_card_x_positions;
 
+
+	//set button textures
 	start_button.set_Default_Pressed_Hover_Images(AssetManager::getTexture("start_button"));
 	exit_button.set_Default_Pressed_Hover_Images(AssetManager::getTexture("exit_button"));
 	deal_button.set_Default_Pressed_Hover_Images(AssetManager::getTexture("deal_button"));
@@ -220,16 +217,20 @@ int main(int argc, char **argv)
 	bet_500_button.set_Default_Pressed_Hover_Images(AssetManager::getTexture("500_button"));
 	bet_1000_button.set_Default_Pressed_Hover_Images(AssetManager::getTexture("1000_button"));
 
+	//attach whether you can use the buttons to the conditions in blackjack
 	hit_button.setEnabled(blackjackGame->getCanHit());
 	deal_button.setEnabled(blackjackGame->getCanDeal());
 	stand_button.setEnabled(blackjackGame->getCanStand());
 	split_button.setEnabled(blackjackGame->getCanSplit());
 	new_hand_button.setEnabled(blackjackGame->getCanStartNewHand());
 	surrender_button.setEnabled(blackjackGame->getCanSurrender());
-
+	
+	//grab font and init non-button textures
 	font = AssetManager::getFont("small");
 	title = AssetManager::getTexture("title");
 	background = AssetManager::getTexture("game_background");
+
+	//init score panels
 	player_score_panel = AssetManager::getTexture("score_panel");
 	dealer_score_panel = AssetManager::getTexture("score_panel");
 	int score_panel_y_pos = y_pos_game_ui_buttons - SCORE_PANEL_HEIGHT -SCREEN_H / 10;
@@ -237,7 +238,7 @@ int main(int argc, char **argv)
 	int score_panel_dealer_x_pos = SCREEN_W - SCORE_PANEL_WIDTH - SCREEN_W/64;
 	al_set_display_icon(display, AssetManager::getTexture("facedowncard"));
 	
-
+	//display stuffs
 	al_clear_to_color(al_map_rgb(255, 0, 255));
 	al_set_target_bitmap(al_get_backbuffer(display));
 
@@ -250,6 +251,7 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
+	//initialize event sources on game tools
 	al_register_event_source(event_queue, al_get_display_event_source(display));
 	al_register_event_source(event_queue, al_get_timer_event_source(timer));
 	al_register_event_source(event_queue, al_get_keyboard_event_source());
@@ -258,8 +260,11 @@ int main(int argc, char **argv)
 	al_flip_display();
 	al_start_timer(timer);
 
+	//set state before entering game loop
 	state = TITLE;
 
+
+	//start game loop
 	while (!doexit)
 	{
 		ALLEGRO_EVENT ev;
@@ -534,6 +539,7 @@ int main(int argc, char **argv)
 		}
 	}
 
+	//shut down
 	AssetManager::destroy();
 	al_destroy_timer(timer);
 	al_destroy_display(display);

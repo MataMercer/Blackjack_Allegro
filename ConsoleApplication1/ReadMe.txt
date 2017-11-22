@@ -1,2 +1,2 @@
-Fully functioining blackjack made with the Allegro library.
+Blackjack made with the Allegro library.
 

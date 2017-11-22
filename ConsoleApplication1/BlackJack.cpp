@@ -341,9 +341,6 @@ string BlackJack::dealerString() {
 			break;
 		}
 	}
-	
-
-
 	return output;
 }
 
