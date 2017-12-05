@@ -174,22 +174,22 @@ void BlackJack::updateOptions() {
 
 bool BlackJack::calculate_who_won() {
 
-	if (player.getHandValue() > (dealer.getHandValue() + dealer.getHiddenCardValue()) || player.getHand_2_Value() > (dealer.getHandValue() + dealer.getHiddenCardValue())) {
+	if (player.getHandValue() > (dealer.getTrueHandValue()) || player.getHand_2_Value() > (dealer.getTrueHandValue())) {
 		winner = PLAYER;
 		buster = NONE;
 		dealer.setCardIsFacedDown(false);
 		player.getAccount()->winBet();
 		return true;
 	}
-	else if (player.getHandValue() < (dealer.getHandValue() + dealer.getHiddenCardValue()) && player.getHand_2_Value() < (dealer.getHandValue() + dealer.getHiddenCardValue())) {
-		cout << dealer.getHandValue() + dealer.getHiddenCardValue() <<endl; 
+	else if (player.getHandValue() < (dealer.getTrueHandValue()) && player.getHand_2_Value() < (dealer.getTrueHandValue())) {
+		cout << dealer.getTrueHandValue() <<endl; 
 		winner = DEALER;
 		buster = NONE;
 		dealer.setCardIsFacedDown(false);
 		player.getAccount()->loseBet();
 		return true;
 	}
-	else if (player.getHandValue() == (dealer.getHandValue() + dealer.getHiddenCardValue()) || player.getHand_2_Value() == (dealer.getHandValue() + dealer.getHiddenCardValue())) {
+	else if (player.getHandValue() == (dealer.getTrueHandValue()) || player.getHand_2_Value() == (dealer.getTrueHandValue())) {
 		winner = TIE;
 		buster = NONE;
 		dealer.setCardIsFacedDown(false);
@@ -212,7 +212,7 @@ bool BlackJack::checkBusted() {
 		dealer.setCardIsFacedDown(false);
 		return true;
 	}
-	else if ((dealer.getHandValue()+dealer.getHiddenCardValue())> 21) {
+	else if (dealer.getTrueHandValue()> 21) {
 		winner = PLAYER;
 		buster = DEALER;
 		player.getAccount()->winBet();
@@ -223,7 +223,7 @@ bool BlackJack::checkBusted() {
 }
 
 bool BlackJack::check_21() {
-	if ((player.getHandValue() == 21 || player.getHand_2_Value() == 21) && dealer.getHandValue() == 21) {
+	if ((player.getHandValue() == 21 || player.getHand_2_Value() == 21) && dealer.getTrueHandValue() == 21) {
 		winner = TIE;
 		buster = NONE;
 		player.getAccount()->tieBet();
@@ -237,7 +237,7 @@ bool BlackJack::check_21() {
 		dealer.setCardIsFacedDown(false);
 		return true;
 	}
-	else if (dealer.getHandValue() == 21) {
+	else if (dealer.getTrueHandValue() == 21) {
 		winner = DEALER;
 		buster = NONE;
 		player.getAccount()->loseBet();

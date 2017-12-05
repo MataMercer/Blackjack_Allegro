@@ -1,3 +1,4 @@
+
 #include "stdafx.h"
 #include "Dealer.h"
 #include <time.h> 
@@ -28,6 +29,28 @@ int Dealer::getHandValue() {
 			total += hand[a].getValue();
 		}
 
+	}
+
+	while (total > 21 && aceCounter > 0) {
+		total -= 10;
+		aceCounter--;
+	}
+
+	return total;
+}
+
+int Dealer::getTrueHandValue() {
+	if (hand.size() == 0) {
+		return 0;
+	}
+
+	int total = 0;
+	int aceCounter = 0;
+	for (int a = 0; a < hand.size(); a++) {
+		if (hand[a].getType() == Card::ACE) {
+			aceCounter++;
+		}
+		total += hand[a].getValue();
 	}
 
 	while (total > 21 && aceCounter > 0) {
@@ -83,7 +106,7 @@ void Dealer::deal_a_card() {
 }
 
 bool Dealer::choose_to_stand_or_not() {
-	if (getHandValue() + getHiddenCardValue() >= 17) {
+	if (getTrueHandValue() >= 17) {
 		return true;
 	}
 	else {

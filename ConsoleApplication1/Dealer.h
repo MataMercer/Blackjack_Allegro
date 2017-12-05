@@ -14,6 +14,7 @@ public:
 	void deal_a_card(Player &p);
 	void deal_a_card();
 	int getHandValue();
+	int getTrueHandValue();
 	void setCardIsFacedDown(bool cond) { cardIsFacedDown = cond; }
 	bool getCardIsFacedDown() { return cardIsFacedDown; }
 	int getHiddenCardValue();
