@@ -13,3 +13,11 @@ Account::Account()
 Account::~Account()
 {
 }
+
+string Account::getAccountNumber() {
+	return accountNumber;
+}
+
+void Account::setAccountNumber(string accountNumber) {
+	this->accountNumber = accountNumber;
+}

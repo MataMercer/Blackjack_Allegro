@@ -75,7 +75,6 @@ public:
 			return disabledOverlay;
 		}
 
-
 		switch (status) {
 		case PRESSED:
 			return pressedOverlay;
