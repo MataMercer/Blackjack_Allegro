@@ -42,7 +42,7 @@ int Player::getHand_2_Value() {
 
 	int total = 0;
 	int aceCounter = 0;
-	for (int a = 0; a < hand.size(); a++) {
+	for (int a = 0; a < hand_2.size(); a++) {
 		if (hand_2[a].getType() == Card::ACE) {
 			aceCounter++;
 		}

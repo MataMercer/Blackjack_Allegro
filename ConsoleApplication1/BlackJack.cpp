@@ -46,7 +46,7 @@ bool BlackJack::makeMove(CHOICE choice) {
 			else if (check_21()) {
 				session_state = LOBBY;
 			}
-			
+
 		}
 		break;
 	case STAND:
@@ -73,7 +73,7 @@ bool BlackJack::makeMove(CHOICE choice) {
 		break;
 	case START_NEW_HAND:
 		winner = NONE;
-		buster  = NONE;
+		buster = NONE;
 		session_state = BETTING;
 
 		break;
@@ -121,6 +121,7 @@ bool BlackJack::makeMove(CHOICE choice) {
 	updateOptions();
 	return true;
 }
+
 
 void BlackJack::updateOptions() {
 	switch (session_state) {
@@ -173,76 +174,191 @@ void BlackJack::updateOptions() {
 }
 
 bool BlackJack::calculate_who_won() {
-
-	if (player.getHandValue() > (dealer.getTrueHandValue()) || player.getHand_2_Value() > (dealer.getTrueHandValue())) {
-		winner = PLAYER;
-		buster = NONE;
-		dealer.setCardIsFacedDown(false);
-		player.getAccount()->winBet();
-		return true;
-	}
-	else if (player.getHandValue() < (dealer.getTrueHandValue()) && player.getHand_2_Value() < (dealer.getTrueHandValue())) {
-		cout << dealer.getTrueHandValue() <<endl; 
-		winner = DEALER;
-		buster = NONE;
-		dealer.setCardIsFacedDown(false);
-		player.getAccount()->loseBet();
-		return true;
-	}
-	else if (player.getHandValue() == (dealer.getTrueHandValue()) || player.getHand_2_Value() == (dealer.getTrueHandValue())) {
-		winner = TIE;
-		buster = NONE;
-		dealer.setCardIsFacedDown(false);
-		player.getAccount()->tieBet();
-		return true;
+	if (player.isSplitted()) {
+		if (player.getHandValue()<21 && player.getHandValue() > (dealer.getTrueHandValue()) && player.getHand_2_Value() < (dealer.getTrueHandValue())) {
+			winner = PLAYER;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->winHalfBet();
+			return true;
+		}
+		else if (player.getHandValue() < (dealer.getTrueHandValue()) && player.getHand_2_Value()< 21 && player.getHand_2_Value() > (dealer.getTrueHandValue())) {
+			winner = PLAYER;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->winHalfBet();
+			return true;
+		}
+		else if (player.getHandValue() > (dealer.getTrueHandValue()) && player.getHand_2_Value() > (dealer.getTrueHandValue())) {
+			winner = PLAYER;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->winBet();
+			return true;
+		}
+		else if (player.getHandValue() < (dealer.getTrueHandValue()) && player.getHand_2_Value() < (dealer.getTrueHandValue())) {
+			cout << dealer.getTrueHandValue() << endl;
+			winner = DEALER;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->loseBet();
+			return true;
+		}
+		else if (player.getHandValue() == (dealer.getTrueHandValue()) && player.getHand_2_Value() != (dealer.getTrueHandValue())) {
+			winner = TIE;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->tieHalfBet();
+			return true;
+		}
+		else if (player.getHandValue() != (dealer.getTrueHandValue()) && player.getHand_2_Value() == (dealer.getTrueHandValue())) {
+			winner = TIE;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->tieHalfBet();
+			return true;
+		}
+		else if (player.getHandValue() == (dealer.getTrueHandValue()) && player.getHand_2_Value() == (dealer.getTrueHandValue())) {
+			winner = TIE;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->tieBet();
+			return true;
+		}
+		else {
+			winner = NONE;
+			buster = NONE;
+			return false;
+		}
 	}
 	else {
-		winner = NONE;
-		buster = NONE;
-		return false;
+		if (player.getHandValue() > (dealer.getTrueHandValue())) {
+			winner = PLAYER;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->winBet();
+			return true;
+		}
+		else if (player.getHandValue() < dealer.getTrueHandValue()) {
+			cout << dealer.getTrueHandValue() << endl;
+			winner = DEALER;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->loseBet();
+			return true;
+		}
+		else if (player.getHandValue() == (dealer.getTrueHandValue())) {
+			winner = TIE;
+			buster = NONE;
+			dealer.setCardIsFacedDown(false);
+			player.getAccount()->tieBet();
+			return true;
+		}
+		else {
+			winner = NONE;
+			buster = NONE;
+			return false;
+		}
 	}
 
 }
 
 bool BlackJack::checkBusted() {
-	if (player.getHandValue() > 21 || player.getHand_2_Value() > 21) {
-		winner = DEALER;
-		buster = PLAYER;
-		player.getAccount()->loseBet();
-		dealer.setCardIsFacedDown(false);
-		return true;
+	if (player.isSplitted()) {
+		if (player.getHandValue() > 21 && player.getHand_2_Value() > 21) {
+			winner = DEALER;
+			buster = PLAYER;
+			player.getAccount()->loseBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (dealer.getTrueHandValue() > 21) {
+			winner = PLAYER;
+			buster = DEALER;
+			player.getAccount()->winBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
 	}
-	else if (dealer.getTrueHandValue()> 21) {
-		winner = PLAYER;
-		buster = DEALER;
-		player.getAccount()->winBet();
-		dealer.setCardIsFacedDown(false);
-		return true;
+	else {
+		if (player.getHandValue() > 21) {
+			winner = DEALER;
+			buster = PLAYER;
+			player.getAccount()->loseBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (dealer.getTrueHandValue() > 21) {
+			winner = PLAYER;
+			buster = DEALER;
+			player.getAccount()->winBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
 	}
 	return false;
 }
 
 bool BlackJack::check_21() {
-	if ((player.getHandValue() == 21 || player.getHand_2_Value() == 21) && dealer.getTrueHandValue() == 21) {
-		winner = TIE;
-		buster = NONE;
-		player.getAccount()->tieBet();
-		dealer.setCardIsFacedDown(false);
-		return true;
+	if (player.isSplitted()) {
+		if ((player.getHandValue() == 21 || player.getHand_2_Value() == 21) && dealer.getTrueHandValue() == 21) {
+			winner = TIE;
+			buster = NONE;
+			player.getAccount()->tieHalfBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if ((player.getHandValue() == 21 && player.getHand_2_Value() == 21) && dealer.getTrueHandValue() == 21) {
+			winner = TIE;
+			buster = NONE;
+			player.getAccount()->tieBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (player.getHandValue() == 21 || player.getHand_2_Value() == 21) {
+			winner = PLAYER;
+			buster = NONE;
+			player.getAccount()->winHalfBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (player.getHandValue() == 21 && player.getHand_2_Value() == 21) {
+			winner = PLAYER;
+			buster = NONE;
+			player.getAccount()->winBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (dealer.getTrueHandValue() == 21) {
+			winner = DEALER;
+			buster = NONE;
+			player.getAccount()->loseBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
 	}
-	else if (player.getHandValue() == 21 || player.getHand_2_Value() == 21) {
-		winner = PLAYER;
-		buster = NONE;
-		player.getAccount()->winBet();
-		dealer.setCardIsFacedDown(false);
-		return true;
-	}
-	else if (dealer.getTrueHandValue() == 21) {
-		winner = DEALER;
-		buster = NONE;
-		player.getAccount()->loseBet();
-		dealer.setCardIsFacedDown(false);
-		return true;
+	else {
+		if ((player.getHandValue() == 21 && dealer.getTrueHandValue() == 21)) {
+			winner = TIE;
+			buster = NONE;
+			player.getAccount()->tieBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (player.getHandValue() == 21) {
+			winner = PLAYER;
+			buster = NONE;
+			player.getAccount()->winBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
+		else if (dealer.getTrueHandValue() == 21) {
+			winner = DEALER;
+			buster = NONE;
+			player.getAccount()->loseBet();
+			dealer.setCardIsFacedDown(false);
+			return true;
+		}
 	}
 	return false;
 }
@@ -272,11 +388,6 @@ vector<ALLEGRO_BITMAP*> BlackJack::getPlayer_Hand_Card_Images() {
 	return vec;
 }
 
-vector<ALLEGRO_BITMAP*> BlackJack::getPlayer_Hand_2_Card_Images() {
-	vector<ALLEGRO_BITMAP *> vec;
-
-	return vec;
-}
 
 vector<ALLEGRO_BITMAP*> BlackJack::getDealer_Hand_Card_Images() {
 	vector<ALLEGRO_BITMAP *> vec;
@@ -295,10 +406,11 @@ vector<ALLEGRO_BITMAP*> BlackJack::getDealer_Hand_Card_Images() {
 string BlackJack::playerString() {
 	string output = "";
 	output.append("Hand: ");
-	if (player.getHandValue() > player.getHand_2_Value()) {
-		output.append(to_string(player.getHandValue()));
-	}
-	else {
+
+	output.append(to_string(player.getHandValue()));
+	
+	if(player.getHand_2().size()>0) {
+		output.append(", Hand 2: ");
 		output.append(to_string(player.getHand_2_Value()));
 	}
 	output.append("\nBet: $");

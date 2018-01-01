@@ -1,7 +1,6 @@
 // ConsoleApplication1.cpp : Defines the entry point for the console application.
 //
 
-#include "stdafx.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
@@ -69,6 +68,8 @@ int main(int argc, char **argv)
 	exit_button.setY(SCREEN_H / 2 + SCREEN_H / 16);
 	exit_button.setWidth(BUTTON_WIDTH);
 	exit_button.setHeight(BUTTON_HEIGHT);
+
+
 
 
 	//gameplay buttons
@@ -348,6 +349,7 @@ int main(int argc, char **argv)
 					doexit = true;
 					state = -1;
 				}
+		
 				else {
 					start_button.setStatus(Button::DEFAULT);
 					exit_button.setStatus(Button::DEFAULT);
@@ -537,6 +539,8 @@ int main(int argc, char **argv)
 			al_flip_display();
 			al_clear_to_color(al_map_rgb(0, 0, 0));
 		}
+
+
 	}
 
 	//shut down

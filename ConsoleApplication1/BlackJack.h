@@ -23,7 +23,6 @@ public:
 	int getDealerHandValue();
 	int getPlayerHandValue();
 	vector<ALLEGRO_BITMAP*> getPlayer_Hand_Card_Images();
-	vector<ALLEGRO_BITMAP*> getPlayer_Hand_2_Card_Images();
 	vector<ALLEGRO_BITMAP*> getDealer_Hand_Card_Images();
 
 	bool* getCanHit(){ return &canHit;}

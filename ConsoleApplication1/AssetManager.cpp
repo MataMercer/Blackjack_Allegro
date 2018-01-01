@@ -2,6 +2,7 @@
 #include "AssetManager.h"
 #include <string>
 #include <iostream>
+#include <sstream>
 #include <map>
 #include <string.h>
 #include <allegro5/allegro.h>
@@ -12,14 +13,17 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_ttf.h>
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 namespace AssetManager {
-	static std::map<std::string, ALLEGRO_FONT *> _fonts;
-	static std::map<std::string, ALLEGRO_BITMAP *> _textures;
+	static map<string, ALLEGRO_FONT *> _fonts;
+	static map<string, ALLEGRO_BITMAP *> _textures;
+	static ofstream _accounts_list_text_File_output;
+	static ifstream _accounts_list_text_File_input;
 
 	bool initialize() {
-		std::map<std::string, int> fonts = {
+		map<string, int> fonts = {
 			{ "small", 23 },
 			{ "normal", 30 },
 			{ "big", 40 }
@@ -27,9 +31,10 @@ namespace AssetManager {
 
 
 
-		std::map<std::string, std::string> textures = {
+		map<string, string> textures = {
 			{ "start_button", "assets/startbutton.png" },
 			{ "exit_button", "assets/exitbutton.png" },
+			{ "load_button", "assets/loadbutton.png" },
 			{ "deal_button", "assets/dealbutton.png" },
 			{ "hit_button", "assets/hitbutton.png" },
 			{ "new_hand_button", "assets/newhandbutton.png" },
@@ -119,7 +124,7 @@ namespace AssetManager {
 
 		};
 
-		for (std::pair<std::string, int> font : fonts) {
+		for (pair<string, int> font : fonts) {
 			_fonts[font.first] = al_load_font("assets/arial.ttf", font.second, NULL);
 			if (_fonts[font.first] == NULL) {
 				return false;
@@ -128,7 +133,7 @@ namespace AssetManager {
 
 
 
-		for (std::pair<std::string, std::string> texture : textures) {
+		for (pair<string, string> texture : textures) {
 			_textures[texture.first] = al_load_bitmap(texture.second.c_str());
 			//al_convert_mask_to_alpha(_textures[texture.first], al_map_rgb(255, 0, 255));
 			if (_textures[texture.first] == NULL) {
@@ -136,27 +141,59 @@ namespace AssetManager {
 			}
 		}
 
+
+		_accounts_list_text_File_output.open("accounts_list_text_file.txt");
+		_accounts_list_text_File_input.open("accounts_list_text_file.txt");
+
 		return true;
 	}
 
-	ALLEGRO_FONT *getFont(std::string font) {
+	ALLEGRO_FONT *getFont(string font) {
 		return _fonts[font];
 	}
 
-	ALLEGRO_BITMAP *getTexture(std::string texture) {
+	ALLEGRO_BITMAP *getTexture(string texture) {
 		return _textures[texture];
 	}
 
+	void updateAccount(string accountNumber) {
+		ostringstream text;
+		text << _accounts_list_text_File_input.rdbuf();
+		string str = text.str();
+
+
+	}
+
+	int readAccount(string accountNumber) {
+
+		while (!_accounts_list_text_File_input.eof())
+		{
+			string accountName = "";
+			_accounts_list_text_File_input >> accountName;
+			int balance = 0;
+			_accounts_list_text_File_input >> balance;
+			if (accountName == accountNumber) {
+				return balance;
+			}
+
+
+		}
+
+		return 0;
+	}
+
 	void destroy() {
-		for (std::pair<std::string, ALLEGRO_FONT *> font : _fonts) {
+		for (pair<string, ALLEGRO_FONT *> font : _fonts) {
 			al_destroy_font(font.second);
 		}
 
-		for (std::pair<std::string, ALLEGRO_BITMAP *> texture : _textures) {
+		for (pair<string, ALLEGRO_BITMAP *> texture : _textures) {
 			al_destroy_bitmap(texture.second);
 		}
 
 		_fonts.clear();
 		_textures.clear();
+		_accounts_list_text_File_output.close();
+		_accounts_list_text_File_input.close();
 	}
 };

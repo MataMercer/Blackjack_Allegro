@@ -15,7 +15,9 @@ public:
 		return;//balance -= bet;
 	}
 	void winBet() { balance += bet; }
+	void winHalfBet() { balance += bet / 2; }
 	void tieBet() { balance += bet / 2; }
+	void tieHalfBet() { balance += bet / 4; };
 	void setBet(int amount) { bet = amount; }
 	void resetBalance() { balance = 0; }
 	string getAccountNumber();
